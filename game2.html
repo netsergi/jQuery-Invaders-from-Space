@@ -108,12 +108,12 @@
 			<div class="energia"></div>
 		</div>
 		<img id="nave" src="img/nave.png" />
-		<img id="malo" class="malo" src="img/malo1.png" />
+		<!-- <img id="malo0" class="malo" src="img/malo1.png" /> -->
 	</main>
 	<script>
 			
 		$(document).ready(function(){
-			var malo = $(".malo");
+			//var malo = $(".malo");
 			var nave = $("#nave");
 			var fondo = $("main");
 			var tope = fondo.width() - nave.width();
@@ -122,7 +122,6 @@
 			var colisionan = false;
 			var navepos = nave.position();
 			var fondopos = fondo.position();
-			var imgMalo = ['malo1.png','malo2.png','malo3.png','malo4.png','malo5.png'];
 
 			//****************************************************************************
 
@@ -134,32 +133,43 @@
 			  	nave.css("top",fondo.outerHeight() - nave.height());
 			  	nave.css("left", (fondo.width()/2 - nave.width()/2) +"px");
 
-			  	fondo.append("<div id='rayo_malo'></div");
+			  	/*fondo.append("<div id='rayo_malo'></div");
 			  	var maloPos = malo.position();
 			  	$('#rayo_malo').css("top",maloPos.top + malo.outerHeight());
-			  	$('#rayo_malo').css("left",maloPos.left + (malo.outerWidth() /2));			 
+			  	$('#rayo_malo').css("left",maloPos.left + (malo.outerWidth() /2));	*/		 
 			}
 
-			 	/*setInterval(function(){
-			  		creaEnemigo++;
+			 	setInterval(function(){
 			  		fondo.append('<img class="malo" id="malo'+creaEnemigo+'" src="img/malo1.png" />');
-			  		var left = Math.floor((Math.random()*500)+50);
+			  		var left = Math.floor((Math.random()*600)+60);
 			  		$("img#malo"+creaEnemigo).css("left",left.toString()+"px");
-			  	},3000);*/
+			  		creaEnemigo++;
+			  	},5000);
+
+			  	setTimeout(function(){
+
+			  		var mover_malo = setInterval (function(){
+			  			$(".malo").css("top","+=10");
+		  				for (var i=0; i<= (creaEnemigo -1);i++)
+		  				{
+			  				if ($("#malo"+i).length >= 0)
+			  				{
+			  					var fondoTope = parseInt(fondo.css("height").replace("px",""))-parseInt(fondo.css("margin").replace("px",""))
+								if ($("#malo"+i).css("top").replace("px","") >= fondoTope )
+								{
+									$("#malo"+i).remove();
+								}
+			  				}			  			 
+						} 		
+
+			  		},300);
+
+			  	},6000);
 
 			//****************************************************************************
 
 		  	var energia = $(".energia"); 
-
-		  	var mueve_malo = setInterval(function(){
-		  		$(".malo").css("top","+=10");
-		  		var fondoTope = parseInt(fondo.css("height").replace("px",""))-parseInt(fondo.css("margin").replace("px",""))
-				if (parseInt(malo.css("top").replace("px","")) >= fondoTope )
-				{
-					clearInterval(mueve_malo);
-					energia.css("width","-=40");
-				}
-		  	},400);	  
+		  	
 
 		  	//****************************************************************************
 
@@ -168,16 +178,16 @@
 				var elem1Pos = elem1.position();
 				var elem2Pos = elem2.position();
 				var topelem1 = elem1.width();
-				var m = elem1.attr("id");
-				switch (m)
+				var esMalo = elem1.attr("id").startsWith("malo");
+				switch (esMalo)
 				{
-					case "malo":
+					case true:
 						if (elem2Pos.left > elem1Pos.left && elem2Pos.top < elem1Pos.top && elem2Pos.left < elem1Pos.left + topelem1)
 						{
 							return true;
 						}
 					break;
-					case "nave":
+					case false:
 						if (elem2Pos.left > elem1Pos.left && elem2Pos.top > elem1Pos.top && elem2Pos.left < elem1Pos.left + topelem1)
 						{
 							return true;
@@ -189,11 +199,10 @@
 
 			//****************************************************************************
 		  	
-		  	function posicionaMalo ()
+		  	/*function posicionaRayoMalo ()
 		  	{
 		  		var TopRayo =parseInt($(".malo").css("top").replace("px","")) + 50 + "px";
-		  		var leftRayo = $(".malo").position().left + ($(".malo").width()/2);
-		  		$('#rayo_malo').css({"top":TopRayo,"left":leftRayo  + "px"});
+		  		$('#rayo_malo').css("top", TopRayo);
 		  	}
 
 		  	var mueve_rayo_malo = setInterval(function(){
@@ -209,15 +218,14 @@
 		  			$("#nave").css("filter","opacity(50%)");
 		  			setTimeout(function(){
 		  				$("#nave").css("filter","opacity(100%)");},150);
-		  				posicionaMalo();
+		  				posicionaRayoMalo();
 
 		  			if (parseInt(energia.css("width").replace("px","")) <= 0)
 		  			{
 		  				clearInterval(mueve_rayo_malo);
 		  				clearInterval(mueve_malo);
 		  				$(".malo").remove();
-		  				$("#nave").remove();
-		  				$("#rayo_malo").remove();
+		  				$("#nave").remove()
 		  				$(".gameOver").show();
 		  			}
 		  		
@@ -225,9 +233,9 @@
 
 		  		if ($('#rayo_malo').css("top").replace("px","") > fondo.outerHeight()-10)
 		  		{
-		  			posicionaMalo();
+		  			posicionaRayoMalo();
 		  		}
-		  	},20);
+		  	},20); */
 
 		  	//****************************************************************************
 
@@ -238,25 +246,32 @@
 							$("#rayo").css("top","-=10");
 							if ($("#rayo").css("top").replace("px","") > $("main").css("top").replace("px",""))
 							{
-								colisionan = colision($(".malo"),$("#rayo"));
-								if (colisionan)
+								for (var i = 0; i <= creaEnemigo; i++)
 								{
-									$("#rayo").remove();
-									++puntos;
-									$(".puntos").html(puntos);
-									$(".malo").attr("src","img/explosion.png");
-									setTimeout(function(){
-										$(".malo").css("display", "none");
-									},300);
-									setTimeout(function(){
-										$(".malo").css("display", "block");
-										$(".malo").attr("src","img/"+ imgMalo[Math.floor((Math.random() * 4) + 1)]);
-										var left = Math.floor((Math.random() * 500) + 10);
-										$(".malo").css({"top":"0","left": left});
-										$('#rayo_malo').css("left",$(".malo").css("left"));
-										fondo.append ('<img id="malo" class="malo" src="img/malo1.png" />');
-									},350);
-								colisionan = false;
+									if ($("img#malo"+ i).length >= 0)
+									{
+										colisionan = colision($("img#malo"+ i),$("#rayo"));	
+										if (colisionan)
+										{
+											$("#rayo").remove();
+											++puntos;
+											$(".puntos").html(puntos);
+											$("img#malo"+ i).css("display", "none");
+											/*setTimeout(function(){
+												$("img#malo"+ i).css("display", "none");
+											},300);
+											setTimeout(function(){
+												$("img#malo"+ i).css("display", "block");
+												$("img#malo"+ i).attr("src","img/malo1.png");
+												var left = Math.floor((Math.random() * 500) + 10);
+												$("img#malo"+ i).css({"top":"0","left": left});
+												$('#rayo_malo').css("left",$(".malo").css("left"));
+												
+											},350);
+										colisionan = false; */
+										}
+									}
+																	
 								}
 
 							}
